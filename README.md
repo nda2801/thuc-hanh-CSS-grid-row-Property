@@ -78,9 +78,3 @@ Mở trực tiếp tệp `index.html` trong bất kỳ trình duyệt web hiện
 # Hoặc mở nhanh bằng trình duyệt trên Windows PowerShell:
 Start-Process "index.html"
 ```
-
----
-
-## 6. Liên kết Kho mã nguồn
-
-- **GitHub Repository**: [https://github.com/nda2801/thuc-hanh-CSS-grid-row-Property.git](https://github.com/nda2801/thuc-hanh-CSS-grid-row-Property.git)
