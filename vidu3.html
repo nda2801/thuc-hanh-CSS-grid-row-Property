@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ví dụ 3: Bento Grid Hiện Đại Với grid-row: span 2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --primary-dark: #6d28d9;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --bg-body: #f8fafc;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            padding: 32px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 980px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 36px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+
+        .nav-back:hover {
+            transform: translateX(-4px);
+        }
+
+        .badge {
+            display: inline-block;
+            background: #ede9fe;
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .desc {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-bottom: 24px;
+        }
+
+        .code-pill {
+            font-family: 'JetBrains Mono', monospace;
+            background: #f1f5f9;
+            color: #7c3aed;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Bento Grid */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-auto-rows: 140px;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .bento-card {
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .bento-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        /* The Tall Hero Bento Card */
+        .card-tall {
+            grid-row: span 2;
+            background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
+            color: #ffffff;
+            border: none;
+            box-shadow: 0 10px 25px rgba(49, 46, 129, 0.25);
+        }
+
+        .card-tall .tag {
+            background: rgba(139, 92, 246, 0.3);
+            color: #c4b5fd;
+            border: 1px solid rgba(196, 181, 253, 0.3);
+        }
+
+        .card-wide {
+            grid-column: span 2;
+            background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+            border-color: #ddd6fe;
+        }
+
+        .card-normal {
+            background: #ffffff;
+        }
+
+        .card-gradient-amber {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-color: #fde68a;
+        }
+
+        .card-gradient-emerald {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-color: #a7f3d0;
+        }
+
+        .tag {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            width: fit-content;
+            margin-bottom: 8px;
+        }
+
+        .tag-gray {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .card-title {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .card-desc {
+            font-size: 13px;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        .card-code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            background: rgba(0, 0, 0, 0.06);
+            padding: 4px 8px;
+            border-radius: 6px;
+            width: fit-content;
+            margin-top: 12px;
+        }
+
+        .card-tall .card-code {
+            background: rgba(255, 255, 255, 0.15);
+            color: #a7f3d0;
+        }
+
+        /* Switcher */
+        .controls-panel {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .btn-toggle {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-toggle:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-toggle.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+        }
+
+        /* Code box */
+        .code-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 18px 22px;
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13.5px;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+
+        .keyword { color: #f472b6; }
+        .property { color: #38bdf8; }
+        .value { color: #a3e635; }
+        .comment { color: #64748b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="nav-back">← Quay lại trang thực hành chính</a>
+        <br>
+        <span class="badge">Ví dụ 3</span>
+        <h1>Thiết Kế Bento Grid Hiện Đại Với grid-row: span 2</h1>
+        <p class="desc">
+            Phong cách bố cục <strong>Bento Grid</strong> (lấy cảm hứng từ khay cơm Bento Nhật Bản) đang là xu hướng hàng đầu trong thiết kế UI/UX hiện nay. Nhờ vào <code class="code-pill">grid-row: span 2;</code>, một khối thẻ chính có thể kéo dài gấp đôi chiều cao so với các ô phụ một cách linh hoạt.
+        </p>
+
+        <div class="controls-panel">
+            <span style="font-size: 14px; font-weight: 700; color: #0f172a;">Vị trí thẻ cao (Tall Card):</span>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn-toggle active" onclick="setTallCardPosition('left', this)">Thẻ cao ở Cột 1</button>
+                <button class="btn-toggle" onclick="setTallCardPosition('right', this)">Thẻ cao ở Cột 3</button>
+            </div>
+        </div>
+
+        <div class="bento-grid" id="bentoGrid">
+            <!-- Tall Card -->
+            <div class="bento-card card-tall" id="tallCard">
+                <div>
+                    <div class="tag">Featured Feature</div>
+                    <div class="card-title" style="font-size: 20px; margin-top: 8px;">🚀 AI Intelligence Engine</div>
+                    <div class="card-desc" style="color: #cbd5e1; margin-top: 6px;">
+                        Tích hợp phân tích dữ liệu tự động theo thời gian thực với mô hình học sâu thế hệ mới.
+                    </div>
+                </div>
+                <div class="card-code">grid-row: span 2;</div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="bento-card card-wide">
+                <div>
+                    <div class="tag tag-gray">Productivity</div>
+                    <div class="card-title">⚡ Tốc độ xử lý siêu nhanh</div>
+                    <div class="card-desc">Tăng hiệu suất làm việc nhóm lên gấp 3 lần với bộ công cụ trực quan.</div>
+                </div>
+                <div class="card-code">grid-column: span 2;</div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="bento-card card-gradient-amber">
+                <div>
+                    <div class="tag tag-gray">Security</div>
+                    <div class="card-title">🔒 Bảo mật dữ liệu</div>
+                    <div class="card-desc">Mã hóa chuẩn ngân hàng cấp cao.</div>
+                </div>
+                <div class="card-code">grid-row: auto;</div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="bento-card card-gradient-emerald">
+                <div>
+                    <div class="tag tag-gray">Cloud Sync</div>
+                    <div class="card-title">☁️ Đồng bộ đám mây</div>
+                    <div class="card-desc">Dữ liệu luôn sẵn sàng trên mọi thiết bị.</div>
+                </div>
+                <div class="card-code">grid-row: auto;</div>
+            </div>
+        </div>
+
+        <div class="code-box">
+<span class="comment">/* Bento Grid: 3 cột, mỗi hàng cao 140px */</span>
+<span class="keyword">.bento-grid</span> {
+  <span class="property">display</span>: <span class="value">grid</span>;
+  <span class="property">grid-template-columns</span>: <span class="value">repeat(3, 1fr)</span>;
+  <span class="property">grid-auto-rows</span>: <span class="value">140px</span>;
+  <span class="property">gap</span>: <span class="value">16px</span>;
+}
+
+<span class="comment">/* Thẻ Featured kéo dài qua 2 hàng */</span>
+<span class="keyword">.card-tall</span> {
+  <span class="property">grid-row</span>: <span class="value">span 2</span>; <span class="comment">/* Tự động kéo dài 2 hàng */</span>
+  <span class="property" id="cssTallCol">grid-column</span>: <span class="value" id="cssTallColVal">1</span>;
+}
+        </div>
+    </div>
+
+    <script>
+        function setTallCardPosition(pos, btn) {
+            document.querySelectorAll('.btn-toggle').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const tallCard = document.getElementById('tallCard');
+            const colVal = document.getElementById('cssTallColVal');
+
+            if (pos === 'left') {
+                tallCard.style.gridColumn = '1';
+                colVal.textContent = '1';
+            } else {
+                tallCard.style.gridColumn = '3';
+                colVal.textContent = '3';
+            }
+        }
+    </script>
+</body>
+</html>

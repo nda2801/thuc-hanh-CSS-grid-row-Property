@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ví dụ 2: Ứng dụng grid-row Trong Bố Cục Thực Tế (Dashboard Layout)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --accent: #0ea5e9;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --bg-body: #f1f5f9;
+            --card-bg: #ffffff;
+            --border: #cbd5e1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            padding: 32px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 36px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+
+        .nav-back:hover {
+            transform: translateX(-4px);
+        }
+
+        .badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .desc {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-bottom: 24px;
+        }
+
+        .code-pill {
+            font-family: 'JetBrains Mono', monospace;
+            background: #e2e8f0;
+            color: #0369a1;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Layout Switcher */
+        .layout-switcher {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .switcher-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-layout {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-layout:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-layout.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+
+        /* The App Mockup Grid */
+        .mockup-frame {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #f8fafc;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            margin-bottom: 24px;
+        }
+
+        .mockup-header {
+            background: #1e293b;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #f59e0b; }
+        .dot-green { background: #10b981; }
+
+        .mockup-title {
+            color: #94a3b8;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            margin-left: 8px;
+        }
+
+        /* Dashboard CSS Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            grid-template-rows: 70px 320px 60px;
+            gap: 12px;
+            padding: 16px;
+            min-height: 480px;
+            transition: all 0.3s ease;
+        }
+
+        .grid-panel {
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .panel-sidebar {
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            color: #ffffff;
+            /* Key grid-row setup: span all 3 rows */
+            grid-column: 1;
+            grid-row: 1 / 4;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.2);
+            border: 2px solid #334155;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 12px;
+        }
+
+        .sidebar-brand {
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .sidebar-menu li {
+            padding: 8px 12px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            font-size: 13px;
+            font-weight: 500;
+            color: #cbd5e1;
+        }
+
+        .sidebar-menu li.active {
+            background: #2563eb;
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .sidebar-tag {
+            margin-top: auto;
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid #0284c7;
+            color: #38bdf8;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            text-align: center;
+        }
+
+        .panel-header {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            grid-column: 2;
+            grid-row: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        .panel-content {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            grid-column: 2;
+            grid-row: 2;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .panel-footer {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            grid-column: 2;
+            grid-row: 3;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .stat-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .stat-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .stat-val {
+            font-size: 20px;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .stat-lbl {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* Explanation card */
+        .info-card {
+            background: #eff6ff;
+            border-left: 4px solid var(--primary);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 24px;
+            font-size: 14px;
+            color: #1e3a8a;
+        }
+
+        /* Code box */
+        .code-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 18px 22px;
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13.5px;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+
+        .keyword { color: #f472b6; }
+        .property { color: #38bdf8; }
+        .value { color: #a3e635; }
+        .comment { color: #64748b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="nav-back">← Quay lại trang thực hành chính</a>
+        <br>
+        <span class="badge">Ví dụ 2</span>
+        <h1>Bố Cục Bảng Điều Khiển Dashboard Thực Tế</h1>
+        <p class="desc">
+            Trong các ứng dụng web quản trị hiện đại, thanh <strong>Sidebar</strong> thường cần chiếm trọn chiều cao màn hình từ trên xuống dưới qua toàn bộ các hàng. Với <code class="code-pill">grid-row: 1 / 4;</code> hoặc <code class="code-pill">grid-row: 1 / -1;</code>, điều này được thực hiện chỉ với 1 dòng CSS duy nhất!
+        </p>
+
+        <div class="layout-switcher">
+            <span style="font-size: 14px; font-weight: 700; color: #0f172a;">Kiểu bố cục thanh điều hướng:</span>
+            <div class="switcher-buttons">
+                <button class="btn-layout active" onclick="setLayout('full-sidebar', this)">Sidebar Toàn Chiều Cao (1 / 4)</button>
+                <button class="btn-layout" onclick="setLayout('under-header', this)">Sidebar Dưới Header (2 / 4)</button>
+            </div>
+        </div>
+
+        <div class="info-card" id="layoutDesc">
+            💡 <strong>Sidebar Toàn Chiều Cao:</strong> Phần tử <code class="code-pill">.sidebar</code> thiết lập <code class="code-pill">grid-row: 1 / 4;</code>, bắt đầu từ Row Line 1 (đỉnh) tới Row Line 4 (đáy), đi qua trọn vẹn cả 3 hàng của layout.
+        </div>
+
+        <div class="mockup-frame">
+            <div class="mockup-header">
+                <div class="dot dot-red"></div>
+                <div class="dot dot-yellow"></div>
+                <div class="dot dot-green"></div>
+                <span class="mockup-title">https://my-app.vn/dashboard — CSS Grid Layout Preview</span>
+            </div>
+
+            <div class="dashboard-grid" id="dashboardGrid">
+                <!-- Sidebar -->
+                <aside class="grid-panel panel-sidebar" id="sidebarPanel">
+                    <div class="sidebar-brand">
+                        <span style="color: #38bdf8; font-size: 18px;">⚡</span> Antigravity Admin
+                    </div>
+                    <ul class="sidebar-menu">
+                        <li class="active">📊 Tổng quan</li>
+                        <li>🛒 Đơn hàng</li>
+                        <li>👥 Khách hàng</li>
+                        <li>📈 Báo cáo</li>
+                        <li>⚙️ Cài đặt</li>
+                    </ul>
+                    <div class="sidebar-tag" id="sidebarTag">
+                        grid-row: 1 / 4
+                    </div>
+                </aside>
+
+                <!-- Header -->
+                <header class="grid-panel panel-header" id="headerPanel">
+                    <div>
+                        <strong style="font-size: 15px; color: #0f172a;">Trang Quản Trị Hệ Thống</strong>
+                        <div style="font-size: 12px; color: #64748b;">Hàng 1 (Row 1): grid-row: 1</div>
+                    </div>
+                    <div style="font-size: 13px; font-weight: 600; color: #2563eb; background: #eff6ff; padding: 4px 12px; border-radius: 6px;">
+                        👤 Admin User
+                    </div>
+                </header>
+
+                <!-- Main Content -->
+                <main class="grid-panel panel-content" id="contentPanel">
+                    <h3 style="font-size: 16px; margin-bottom: 6px; color: #0f172a;">Khu vực nội dung chính</h3>
+                    <p style="font-size: 13.5px; color: #64748b;">Nằm ở Hàng 2, Cột 2 (<code class="code-pill">grid-row: 2; grid-column: 2;</code>). Chiều cao 320px tự động co giãn theo nội dung.</p>
+                    
+                    <div class="stat-cards">
+                        <div class="stat-card">
+                            <div class="stat-val" style="color: #2563eb;">1,420</div>
+                            <div class="stat-lbl">Người dùng hoạt động</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-val" style="color: #10b981;">$38,400</div>
+                            <div class="stat-lbl">Doanh thu tháng này</div>
+                        </div>
+                    </div>
+                </main>
+
+                <!-- Footer -->
+                <footer class="grid-panel panel-footer" id="footerPanel">
+                    <span>© 2026 Admin Dashboard. Hàng 3 (Row 3).</span>
+                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #64748b;">grid-row: 3</span>
+                </footer>
+            </div>
+        </div>
+
+        <div class="code-box">
+<span class="comment">/* 1. Thiết lập Grid Container */</span>
+<span class="keyword">.dashboard-grid</span> {
+  <span class="property">display</span>: <span class="value">grid</span>;
+  <span class="property">grid-template-columns</span>: <span class="value">240px 1fr</span>; <span class="comment">/* Cột sidebar và cột nội dung */</span>
+  <span class="property">grid-template-rows</span>: <span class="value">70px 1fr 60px</span>;  <span class="comment">/* Header, Content, Footer */</span>
+  <span class="property">gap</span>: <span class="value">12px</span>;
+}
+
+<span class="comment">/* 2. Cấu hình Sidebar trải dọc toàn bộ chiều cao */</span>
+<span class="keyword">.panel-sidebar</span> {
+  <span class="property">grid-column</span>: <span class="value" id="cssSideCol">1</span>;
+  <span class="property">grid-row</span>: <span class="value" id="cssSideRow">1 / 4</span>; <span class="comment">/* Bắt đầu line 1, kết thúc line 4 (chiếm cả 3 hàng) */</span>
+}
+        </div>
+    </div>
+
+    <script>
+        function setLayout(type, btn) {
+            document.querySelectorAll('.btn-layout').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const sidebar = document.getElementById('sidebarPanel');
+            const header = document.getElementById('headerPanel');
+            const content = document.getElementById('contentPanel');
+            const footer = document.getElementById('footerPanel');
+            const tag = document.getElementById('sidebarTag');
+            const desc = document.getElementById('layoutDesc');
+            const cssSideRow = document.getElementById('cssSideRow');
+            const cssSideCol = document.getElementById('cssSideCol');
+
+            if (type === 'full-sidebar') {
+                sidebar.style.gridRow = '1 / 4';
+                sidebar.style.gridColumn = '1';
+                header.style.gridColumn = '2';
+                header.style.gridRow = '1';
+                content.style.gridColumn = '2';
+                content.style.gridRow = '2';
+                footer.style.gridColumn = '2';
+                footer.style.gridRow = '3';
+
+                tag.textContent = 'grid-row: 1 / 4';
+                cssSideRow.textContent = '1 / 4; /* hoặc 1 / -1 */';
+                cssSideCol.textContent = '1';
+                desc.innerHTML = `💡 <strong>Sidebar Toàn Chiều Cao:</strong> Phần tử <code class="code-pill">.sidebar</code> thiết lập <code class="code-pill">grid-row: 1 / 4;</code>, bắt đầu từ Row Line 1 (đỉnh) tới Row Line 4 (đáy), đi qua trọn vẹn cả 3 hàng của layout.`;
+            } else {
+                header.style.gridColumn = '1 / 3';
+                header.style.gridRow = '1';
+                sidebar.style.gridColumn = '1';
+                sidebar.style.gridRow = '2 / 4';
+                content.style.gridColumn = '2';
+                content.style.gridRow = '2';
+                footer.style.gridColumn = '2';
+                footer.style.gridRow = '3';
+
+                tag.textContent = 'grid-row: 2 / 4';
+                cssSideRow.textContent = '2 / 4; /* Từ dòng 2 đến 4, dưới Header */';
+                cssSideCol.textContent = '1';
+                desc.innerHTML = `💡 <strong>Sidebar Dưới Header:</strong> Header chiếm trọn cột 1 và 2 (<code class="code-pill">grid-column: 1 / 3</code>) ở Hàng 1. Khi đó Sidebar bắt đầu từ <code class="code-pill">grid-row: 2 / 4;</code> (từ Row Line 2 đến Row Line 4), nằm bên dưới Header.`;
+            }
+        }
+    </script>
+</body>
+</html>
